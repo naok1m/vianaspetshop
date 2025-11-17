@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeNavigation();
     initializeSmoothScrolling();
     initializeProductTabs();
-    initializeGalleryFilter();
     initializeTestimonialsCarousel();
     initializeContactForm();
     initializeScrollAnimations();
@@ -49,8 +48,6 @@ function initializeNavigation() {
     });
     
     // Scroll do header
-    let lastScrollY = window.scrollY;
-    
     window.addEventListener('scroll', function() {
         const currentScrollY = window.scrollY;
         
@@ -60,14 +57,8 @@ function initializeNavigation() {
             header.classList.remove('scrolled');
         }
         
-        // Auto-hide header ao scrollar para baixo
-        if (currentScrollY > lastScrollY && currentScrollY > 200) {
-            header.style.transform = 'translateY(-100%)';
-        } else {
-            header.style.transform = 'translateY(0)';
-        }
-        
-        lastScrollY = currentScrollY;
+        // Header sempre visível, acompanhando o scroll
+        header.style.transform = 'translateY(0)';
     });
     
     // Destaque do link ativo baseado na seção atual
@@ -151,92 +142,6 @@ function initializeProductTabs() {
                     targetElement.style.opacity = '1';
                 }, 50);
             }
-        });
-    });
-}
-
-// ========================================
-// FILTRO DA GALERIA
-// ========================================
-function initializeGalleryFilter() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const filterValue = this.getAttribute('data-filter');
-            
-            // Remove active de todos os botões
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Adiciona active ao botão clicado
-            this.classList.add('active');
-            
-            // Filtra os itens
-            galleryItems.forEach(item => {
-                const itemCategory = item.getAttribute('data-category');
-                
-                if (filterValue === 'all' || itemCategory === filterValue) {
-                    item.style.display = 'block';
-                    // Animação de entrada
-                    setTimeout(() => {
-                        item.style.opacity = '1';
-                        item.style.transform = 'scale(1)';
-                    }, 100);
-                } else {
-                    item.style.opacity = '0';
-                    item.style.transform = 'scale(0.8)';
-                    setTimeout(() => {
-                        item.style.display = 'none';
-                    }, 300);
-                }
-            });
-        });
-    });
-    
-    // Modal da galeria
-    initializeGalleryModal();
-}
-
-function initializeGalleryModal() {
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    
-    galleryItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const imgSrc = this.querySelector('img').src;
-            const imgAlt = this.querySelector('img').alt;
-            
-            // Criar modal
-            const modal = document.createElement('div');
-            modal.className = 'gallery-modal';
-            modal.innerHTML = `
-                <div class="modal-overlay">
-                    <div class="modal-content">
-                        <button class="modal-close">&times;</button>
-                        <img src="${imgSrc}" alt="${imgAlt}">
-                        <p>${imgAlt}</p>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            document.body.style.overflow = 'hidden';
-            
-            // Fechar modal
-            const closeModal = () => {
-                modal.remove();
-                document.body.style.overflow = 'auto';
-            };
-            
-            modal.querySelector('.modal-close').addEventListener('click', closeModal);
-            modal.querySelector('.modal-overlay').addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-            
-            // Fechar com ESC
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeModal();
-            });
         });
     });
 }
@@ -483,7 +388,7 @@ function initializeScrollAnimations() {
     
     // Observar elementos para animação
     const elementsToAnimate = document.querySelectorAll(
-        '.service-card, .product-card, .gallery-item, .testimonial-card, .contact-item'
+        '.service-card, .product-card, .testimonial-card, .contact-item'
     );
     
     elementsToAnimate.forEach(el => {
@@ -783,13 +688,9 @@ document.addEventListener('keydown', function(e) {
         }
     }
     
-    // ESC para fechar modais
+    // ESC para fechar modais (se houver)
     if (e.key === 'Escape') {
-        const modal = document.querySelector('.gallery-modal');
-        if (modal) {
-            modal.remove();
-            document.body.style.overflow = 'auto';
-        }
+        // Fechar modais se existirem
     }
 });
 
