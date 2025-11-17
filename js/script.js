@@ -1,10 +1,5 @@
 // Aguarda o carregamento completo da página
 document.addEventListener('DOMContentLoaded', function() {
-    // Registrar plugins GSAP
-    if (typeof gsap !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger);
-    }
-    
     // Inicialização de todas as funcionalidades
     initializeNavigation();
     initializeSmoothScrolling();
@@ -14,9 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeScrollAnimations();
     initializeBackToTop();
     initializeLazyLoading();
-    
-    // Animações GSAP
-    initializeGSAPAnimations();
     
     // SEO e Performance
     initializeSEOFeatures();
@@ -170,119 +162,31 @@ function initializeProductTabs() {
             const targetElement = document.getElementById(targetCategory);
             
             if (targetElement) {
-                // Anima saída das categorias ativas
+                // Remove categorias ativas
                 productCategories.forEach(category => {
                     if (category.classList.contains('active') && category !== targetElement) {
-                        if (typeof gsap !== 'undefined') {
-                            gsap.to(category, {
-                                opacity: 0,
-                                y: -20,
-                                scale: 0.95,
-                                duration: 0.3,
-                                ease: 'power2.in',
-                                onComplete: function() {
-                                    category.classList.remove('active');
-                                    category.style.display = 'none';
-                                }
-                            });
-                        } else {
-                            category.classList.remove('active');
-                            category.style.display = 'none';
-                        }
+                        category.classList.remove('active');
+                        category.style.display = 'none';
                     }
                 });
                 
-                // Anima entrada da categoria alvo
-                if (typeof gsap !== 'undefined') {
-                    // Prepara para animação
-                    targetElement.style.display = 'grid';
-                    targetElement.style.opacity = '0';
-                    targetElement.style.transform = 'translateY(20px) scale(0.95)';
-                    
-                    // Força reflow
-                    targetElement.offsetHeight;
-                    
-                    // Anima entrada
-                    gsap.to(targetElement, {
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        duration: 0.5,
-                        ease: 'power3.out',
-                        onStart: function() {
-                            targetElement.classList.add('active');
-                        }
-                    });
-                    
-                    // Anima os cards individuais
-                    const productCards = targetElement.querySelectorAll('.product-card');
-                    productCards.forEach((card, index) => {
-                        gsap.fromTo(card,
-                            {
-                                opacity: 0,
-                                y: 30,
-                                scale: 0.9
-                            },
-                            {
-                                opacity: 1,
-                                y: 0,
-                                scale: 1,
-                                duration: 0.4,
-                                ease: 'back.out(1.2)',
-                                delay: index * 0.1
-                            }
-                        );
-                    });
-                } else {
-                    // Fallback sem GSAP
-                    targetElement.style.display = 'grid';
-                    targetElement.style.opacity = '0';
-                    targetElement.classList.add('active');
-                    
-                    setTimeout(() => {
-                        targetElement.style.transition = 'opacity 0.5s ease';
-                        targetElement.style.opacity = '1';
-                    }, 10);
-                }
+                // Mostra categoria alvo
+                targetElement.style.display = 'grid';
+                targetElement.style.opacity = '0';
+                targetElement.classList.add('active');
+                
+                setTimeout(() => {
+                    targetElement.style.opacity = '1';
+                }, 50);
             }
         });
     });
     
-    // Inicializar primeira categoria com animação
+    // Inicializar primeira categoria
     const firstCategory = document.querySelector('.product-category.active');
     if (firstCategory) {
-        // Garantir que está visível
-        if (firstCategory.style.display === 'none' || !firstCategory.style.display) {
-            firstCategory.style.display = 'grid';
-        }
-        
-        if (typeof gsap !== 'undefined') {
-            // Resetar estado inicial
-            gsap.set(firstCategory, { opacity: 1, y: 0, scale: 1 });
-            
-            const productCards = firstCategory.querySelectorAll('.product-card');
-            productCards.forEach((card, index) => {
-                gsap.fromTo(card,
-                    {
-                        opacity: 0,
-                        y: 30,
-                        scale: 0.9
-                    },
-                    {
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        duration: 0.4,
-                        ease: 'back.out(1.2)',
-                        delay: 0.3 + (index * 0.1)
-                    }
-                );
-            });
-        } else {
-            // Fallback sem GSAP
-            firstCategory.style.opacity = '1';
-            firstCategory.style.transform = 'translateY(0) scale(1)';
-        }
+        firstCategory.style.display = 'grid';
+        firstCategory.style.opacity = '1';
     }
 }
 
@@ -304,61 +208,17 @@ function initializeTestimonialsCarousel() {
         const currentCard = testimonialCards[currentTestimonial];
         const nextCard = testimonialCards[index];
         
-        // Animar saída do card atual
-        if (typeof gsap !== 'undefined') {
-            gsap.to(currentCard, {
-                opacity: 0,
-                x: direction === 'next' ? -30 : 30,
-                scale: 0.95,
-                duration: 0.4,
-                ease: 'power2.in',
-                onComplete: function() {
-                    currentCard.classList.remove('active');
-                    currentCard.style.display = 'none';
-                    
-                    // Animar entrada do próximo card
-                    nextCard.style.display = 'block';
-                    nextCard.style.visibility = 'visible';
-                    nextCard.classList.add('active');
-                    
-                    // Força reflow
-                    nextCard.offsetHeight;
-                    
-                    gsap.fromTo(nextCard, 
-                        {
-                            opacity: 0,
-                            x: direction === 'next' ? 30 : -30,
-                            scale: 0.95,
-                            visibility: 'visible'
-                        },
-                        {
-                            opacity: 1,
-                            x: 0,
-                            scale: 1,
-                            visibility: 'visible',
-                            duration: 0.5,
-                            ease: 'power2.out',
-                            onComplete: function() {
-                                isAnimating = false;
-                            }
-                        }
-                    );
-                }
-            });
-        } else {
-            // Fallback sem GSAP
-            currentCard.classList.remove('active');
-            currentCard.style.display = 'none';
-            currentCard.style.visibility = 'hidden';
-            
-            nextCard.style.display = 'block';
-            nextCard.style.visibility = 'visible';
-            nextCard.classList.add('active');
-            nextCard.style.opacity = '1';
-            nextCard.style.transform = 'translateX(0) scale(1)';
-            
-            isAnimating = false;
-        }
+        // Trocar cards de forma simples
+        currentCard.classList.remove('active');
+        currentCard.style.display = 'none';
+        currentCard.style.visibility = 'hidden';
+        
+        nextCard.style.display = 'block';
+        nextCard.style.visibility = 'visible';
+        nextCard.classList.add('active');
+        nextCard.style.opacity = '1';
+        
+        isAnimating = false;
         
         currentTestimonial = index;
     }
@@ -448,38 +308,16 @@ function initializeTestimonialsCarousel() {
         firstCard.style.display = 'block';
         firstCard.style.visibility = 'visible';
         
-        // Usar setTimeout para garantir que o DOM está pronto
-        setTimeout(() => {
-            if (typeof gsap !== 'undefined') {
-                // Resetar estado inicial do primeiro card
-                gsap.set(firstCard, { 
-                    opacity: 1, 
-                    x: 0, 
-                    scale: 1,
-                    display: 'block',
-                    visibility: 'visible'
-                });
-            } else {
-                // Fallback sem GSAP
-                firstCard.style.opacity = '1';
-                firstCard.style.transform = 'translateX(0) scale(1)';
-                firstCard.style.visibility = 'visible';
-            }
-        }, 100);
+        // Garantir que está visível
+        firstCard.style.opacity = '1';
+        firstCard.style.visibility = 'visible';
         
         // Esconder outros cards
         for (let i = 1; i < testimonialCards.length; i++) {
             testimonialCards[i].classList.remove('active');
             testimonialCards[i].style.display = 'none';
             testimonialCards[i].style.visibility = 'hidden';
-            if (typeof gsap !== 'undefined') {
-                gsap.set(testimonialCards[i], { 
-                    opacity: 0, 
-                    x: 30, 
-                    scale: 0.95,
-                    visibility: 'hidden'
-                });
-            }
+            testimonialCards[i].style.opacity = '0';
         }
     }
     
@@ -650,7 +488,7 @@ function submitForm() {
 }
 
 // ========================================
-// ANIMAÇÕES DE SCROLL
+// ANIMAÇÕES DE SCROLL SIMPLES
 // ========================================
 function initializeScrollAnimations() {
     const observerOptions = {
@@ -668,7 +506,7 @@ function initializeScrollAnimations() {
     
     // Observar elementos para animação
     const elementsToAnimate = document.querySelectorAll(
-        '.service-card, .product-card, .testimonial-card, .contact-item'
+        '.service-card, .product-card, .stat-card, .feature-card, .contact-item, .section-header'
     );
     
     elementsToAnimate.forEach(el => {
@@ -678,7 +516,6 @@ function initializeScrollAnimations() {
     
     // Animações especiais
     initializeCounterAnimations();
-    initializeParallaxEffects();
 }
 
 function initializeCounterAnimations() {
@@ -714,20 +551,7 @@ function initializeCounterAnimations() {
     }
 }
 
-function initializeParallaxEffects() {
-    const parallaxElements = document.querySelectorAll('.parallax');
-    
-    if (parallaxElements.length > 0) {
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            
-            parallaxElements.forEach(element => {
-                const rate = scrolled * -0.5;
-                element.style.transform = `translateY(${rate}px)`;
-            });
-        });
-    }
-}
+
 
 // ========================================
 // BACK TO TOP BUTTON
@@ -1066,623 +890,7 @@ window.addEventListener('unhandledrejection', function(e) {
     e.preventDefault();
 });
 
-// ========================================
-// ANIMAÇÕES GSAP
-// ========================================
-function initializeGSAPAnimations() {
-    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-        console.warn('GSAP não carregado. Animações desabilitadas.');
-        return;
-    }
 
-    // Configuração global do ScrollTrigger
-    gsap.config({
-        nullTargetWarn: false
-    });
-
-    // Animação inicial do Header
-    const header = document.querySelector('.header');
-    if (header) {
-        gsap.set(header, { opacity: 1, y: 0 }); // Garantir visibilidade inicial
-        gsap.fromTo(header, 
-            { opacity: 0, y: -50 },
-            { 
-                opacity: 1, 
-                y: 0,
-                duration: 0.8,
-                ease: 'power3.out',
-                immediateRender: false
-            }
-        );
-    }
-
-    // Animação do logo
-    const logo = document.querySelector('.logo');
-    if (logo) {
-        gsap.set(logo, { opacity: 1, scale: 1 }); // Garantir visibilidade inicial
-        gsap.fromTo(logo,
-            { opacity: 0, scale: 0.5 },
-            {
-                opacity: 1,
-                scale: 1,
-                duration: 0.6,
-                ease: 'back.out(1.7)',
-                delay: 0.2,
-                immediateRender: false
-            }
-        );
-    }
-
-    // Animação do menu de navegação
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach((link, index) => {
-        gsap.set(link, { opacity: 1, y: 0 }); // Garantir visibilidade inicial
-        gsap.fromTo(link,
-            { opacity: 0, y: -20 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                ease: 'power2.out',
-                delay: 0.3 + (index * 0.05),
-                immediateRender: false
-            }
-        );
-    });
-
-    // Animação do Hero Section
-    const heroText = document.querySelector('.hero-text');
-    const heroImage = document.querySelector('.hero-image');
-    if (heroText) {
-        gsap.set(heroText, { opacity: 1, y: 0 }); // Garantir visibilidade inicial
-        gsap.fromTo(heroText,
-            { opacity: 0, y: 50 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: 'power3.out',
-                delay: 0.2,
-                immediateRender: false
-            }
-        );
-    }
-    
-    if (heroImage) {
-        gsap.set(heroImage, { opacity: 1, x: 0 }); // Garantir visibilidade inicial
-        gsap.fromTo(heroImage,
-            { opacity: 0, x: 50 },
-            {
-                opacity: 1,
-                x: 0,
-                duration: 1,
-                ease: 'power3.out',
-                delay: 0.4,
-                immediateRender: false
-            }
-        );
-    }
-
-    // Animação dos botões do hero
-    const heroButtons = document.querySelectorAll('.hero-buttons .btn');
-    heroButtons.forEach((btn, index) => {
-        gsap.set(btn, { opacity: 1, y: 0 }); // Garantir visibilidade inicial
-        gsap.fromTo(btn,
-            { opacity: 0, y: 30 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                ease: 'back.out(1.7)',
-                delay: 0.6 + (index * 0.1),
-                immediateRender: false
-            }
-        );
-    });
-
-    // Animação da seção About
-    const aboutText = document.querySelector('.about-text');
-    const aboutImage = document.querySelector('.about-image');
-    if (aboutText && aboutImage) {
-        gsap.from(aboutText, {
-            scrollTrigger: {
-                trigger: aboutText,
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            x: -50,
-            duration: 1,
-            ease: 'power3.out'
-        });
-
-        gsap.from(aboutImage, {
-            scrollTrigger: {
-                trigger: aboutImage,
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            x: 50,
-            duration: 1,
-            ease: 'power3.out'
-        });
-    }
-
-    // Animação dos feature items
-    const featureItems = document.querySelectorAll('.feature-item');
-    featureItems.forEach((item, index) => {
-        gsap.from(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            x: -30,
-            duration: 0.6,
-            ease: 'power2.out',
-            delay: index * 0.1
-        });
-    });
-
-    // Animação da seção Adoption
-    const adoptionContent = document.querySelector('.adoption-content');
-    if (adoptionContent) {
-        gsap.from(adoptionContent, {
-            scrollTrigger: {
-                trigger: adoptionContent,
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            y: 50,
-            duration: 1,
-            ease: 'power3.out'
-        });
-    }
-
-    // Animação dos event items
-    const eventItems = document.querySelectorAll('.event-item');
-    eventItems.forEach((item, index) => {
-        gsap.from(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            x: -20,
-            duration: 0.6,
-            ease: 'power2.out',
-            delay: index * 0.1
-        });
-    });
-
-    // Animação dos adoption feature cards
-    const adoptionCards = document.querySelectorAll('.adoption-features .feature-card');
-    adoptionCards.forEach((card, index) => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.7,
-            ease: 'back.out(1.2)',
-            delay: index * 0.15
-        });
-
-        // Hover animation
-        card.addEventListener('mouseenter', function() {
-            gsap.to(card, {
-                y: -5,
-                scale: 1.02,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-
-        card.addEventListener('mouseleave', function() {
-            gsap.to(card, {
-                y: 0,
-                scale: 1,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-    });
-
-    // Animação da seção Services
-    const serviceCards = document.querySelectorAll('.service-card');
-    serviceCards.forEach((card, index) => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            y: 50,
-            duration: 0.8,
-            ease: 'power3.out',
-            delay: index * 0.1
-        });
-
-        // Hover animation
-        card.addEventListener('mouseenter', function() {
-            gsap.to(card, {
-                y: -10,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-
-        card.addEventListener('mouseleave', function() {
-            gsap.to(card, {
-                y: 0,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-    });
-
-    // Animação da seção Products
-    const productCards = document.querySelectorAll('.product-card');
-    productCards.forEach((card, index) => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            scale: 0.8,
-            duration: 0.6,
-            ease: 'back.out(1.4)',
-            delay: index * 0.08
-        });
-
-        // Hover animation
-        card.addEventListener('mouseenter', function() {
-            gsap.to(card, {
-                y: -8,
-                scale: 1.02,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-
-        card.addEventListener('mouseleave', function() {
-            gsap.to(card, {
-                y: 0,
-                scale: 1,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-    });
-
-    // Animação da seção Testimonials (apenas para o card ativo)
-    const testimonialsSection = document.querySelector('.testimonials');
-    if (testimonialsSection) {
-        const activeCard = document.querySelector('.testimonial-card.active');
-        if (activeCard) {
-            // Garantir que o card ativo está visível
-            gsap.set(activeCard, { opacity: 1, y: 0, x: 0, scale: 1 });
-        }
-        
-        // Animar apenas a seção, não os cards individuais (para não interferir no carrossel)
-        gsap.from(testimonialsSection, {
-            scrollTrigger: {
-                trigger: testimonialsSection,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.8,
-            ease: 'power3.out'
-        });
-    }
-
-    // Animação da seção Contact
-    const contactItems = document.querySelectorAll('.contact-item');
-    contactItems.forEach((item, index) => {
-        gsap.from(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            x: -30,
-            duration: 0.7,
-            ease: 'power2.out',
-            delay: index * 0.1
-        });
-
-        // Hover animation
-        item.addEventListener('mouseenter', function() {
-            gsap.to(item, {
-                x: 5,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-
-        item.addEventListener('mouseleave', function() {
-            gsap.to(item, {
-                x: 0,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-    });
-
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-        gsap.from(contactForm, {
-            scrollTrigger: {
-                trigger: contactForm,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            x: 30,
-            duration: 0.8,
-            ease: 'power3.out'
-        });
-    }
-
-    // Animação dos location items
-    const locationItems = document.querySelectorAll('.location-item');
-    locationItems.forEach((item, index) => {
-        gsap.from(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-            ease: 'power2.out',
-            delay: index * 0.1
-        });
-
-        // Hover animation
-        item.addEventListener('mouseenter', function() {
-            gsap.to(item, {
-                x: 5,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-
-        item.addEventListener('mouseleave', function() {
-            gsap.to(item, {
-                x: 0,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-    });
-
-    // Animação do Section Header
-    const sectionHeaders = document.querySelectorAll('.section-header');
-    sectionHeaders.forEach((header) => {
-        gsap.from(header, {
-            scrollTrigger: {
-                trigger: header,
-                start: 'top 90%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.8,
-            ease: 'power3.out'
-        });
-    });
-
-    // Animação dos stat cards (se existirem)
-    const statCards = document.querySelectorAll('.stat-card');
-    statCards.forEach((card, index) => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            scale: 0.5,
-            duration: 0.6,
-            ease: 'back.out(1.5)',
-            delay: index * 0.1
-        });
-
-        // Hover animation
-        card.addEventListener('mouseenter', function() {
-            gsap.to(card, {
-                y: -10,
-                scale: 1.05,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-
-        card.addEventListener('mouseleave', function() {
-            gsap.to(card, {
-                y: 0,
-                scale: 1,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-        });
-    });
-
-    // Animação do Footer
-    const footerSections = document.querySelectorAll('.footer-section');
-    footerSections.forEach((section, index) => {
-        gsap.from(section, {
-            scrollTrigger: {
-                trigger: section,
-                start: 'top 90%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            ease: 'power2.out',
-            delay: index * 0.1
-        });
-    });
-
-    // Animação dos tabs de produtos
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    tabButtons.forEach((btn) => {
-        btn.addEventListener('mouseenter', function() {
-            gsap.to(btn, {
-                scale: 1.05,
-                duration: 0.2,
-                ease: 'power2.out'
-            });
-        });
-
-        btn.addEventListener('mouseleave', function() {
-            gsap.to(btn, {
-                scale: 1,
-                duration: 0.2,
-                ease: 'power2.out'
-            });
-        });
-    });
-
-    // Animação dos botões em geral
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach((btn) => {
-        btn.addEventListener('mouseenter', function() {
-            gsap.to(btn, {
-                scale: 1.05,
-                duration: 0.2,
-                ease: 'power2.out'
-            });
-        });
-
-        btn.addEventListener('mouseleave', function() {
-            gsap.to(btn, {
-                scale: 1,
-                duration: 0.2,
-                ease: 'power2.out'
-            });
-        });
-    });
-
-
-    // Animação dos ícones sociais
-    const socialLinks = document.querySelectorAll('.social-link');
-    socialLinks.forEach((link) => {
-        link.addEventListener('mouseenter', function() {
-            gsap.to(link, {
-                scale: 1.1,
-                rotation: 5,
-                duration: 0.3,
-                ease: 'back.out(1.7)'
-            });
-        });
-
-        link.addEventListener('mouseleave', function() {
-            gsap.to(link, {
-                scale: 1,
-                rotation: 0,
-                duration: 0.3,
-                ease: 'back.out(1.7)'
-            });
-        });
-    });
-
-    // Animação dos controles do carrossel
-    const carouselControls = document.querySelectorAll('.prev-btn, .next-btn');
-    carouselControls.forEach((btn) => {
-        btn.addEventListener('mouseenter', function() {
-            gsap.to(btn, {
-                scale: 1.1,
-                rotation: 5,
-                duration: 0.3,
-                ease: 'back.out(1.7)'
-            });
-        });
-
-        btn.addEventListener('mouseleave', function() {
-            gsap.to(btn, {
-                scale: 1,
-                rotation: 0,
-                duration: 0.3,
-                ease: 'back.out(1.7)'
-            });
-        });
-    });
-
-    // Animação do about badge
-    const aboutBadge = document.querySelector('.about-badge');
-    if (aboutBadge) {
-        gsap.from(aboutBadge, {
-            scrollTrigger: {
-                trigger: aboutBadge,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            scale: 0.5,
-            duration: 0.6,
-            ease: 'back.out(1.7)'
-        });
-    }
-
-    // Animação do adoption image
-    const adoptionImage = document.querySelector('.adoption-image img');
-    if (adoptionImage) {
-        gsap.from(adoptionImage, {
-            scrollTrigger: {
-                trigger: adoptionImage,
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            scale: 0.9,
-            duration: 1,
-            ease: 'power3.out'
-        });
-    }
-
-    // Animação dos adoption buttons
-    const adoptionButtons = document.querySelectorAll('.adoption-buttons .btn');
-    adoptionButtons.forEach((btn, index) => {
-        gsap.from(btn, {
-            scrollTrigger: {
-                trigger: btn,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-            ease: 'back.out(1.4)',
-            delay: index * 0.1
-        });
-    });
-
-    // Animação suave do header ao scrollar (usando header já declarado acima)
-    if (header) {
-        ScrollTrigger.create({
-            start: 'top -100',
-            end: 99999,
-            toggleClass: { className: 'scrolled', targets: header }
-        });
-    }
-}
 
 // ========================================
 // CLEANUP
@@ -1690,9 +898,4 @@ function initializeGSAPAnimations() {
 window.addEventListener('beforeunload', function() {
     // Cleanup quando necessário
     document.body.classList.remove('menu-open');
-    
-    // Limpar ScrollTriggers
-    if (typeof ScrollTrigger !== 'undefined') {
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    }
 });
