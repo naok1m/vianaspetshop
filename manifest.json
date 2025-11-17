@@ -1,7 +1,7 @@
 {
-  "name": "Viana's Pet Shop Passaré",
+  "name": "Viana's Pet Shop",
   "short_name": "Viana's Pet Shop",
-  "description": "Pet shop especializada em cuidados para animais de estimação no bairro Passaré",
+  "description": "Pet shop especializada em cuidados para animais de estimação",
   "theme_color": "#FF7A00",
   "background_color": "#FFFFFF",
   "display": "standalone",
