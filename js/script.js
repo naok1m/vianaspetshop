@@ -22,30 +22,77 @@ function initializeNavigation() {
     const navMenu = document.querySelector('.nav-menu');
     const header = document.querySelector('.header');
     
+    // Verificar se os elementos existem
+    if (!hamburger || !navMenu || !header) {
+        console.error('Elementos de navegação não encontrados');
+        return;
+    }
+    
     // Toggle menu mobile
-    hamburger.addEventListener('click', function() {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        document.body.classList.toggle('menu-open');
+    hamburger.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const isActive = hamburger.classList.contains('active');
+        
+        if (isActive) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
     });
+    
+    function openMenu() {
+        hamburger.classList.add('active');
+        navMenu.classList.add('active');
+        document.body.classList.add('menu-open');
+        document.body.style.overflow = 'hidden'; // Prevenir scroll
+    }
+    
+    function closeMenu() {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.classList.remove('menu-open');
+        document.body.style.overflow = ''; // Restaurar scroll
+    }
     
     // Fechar menu ao clicar em link
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function() {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.classList.remove('menu-open');
+            closeMenu();
         });
     });
     
     // Fechar menu ao clicar fora
     document.addEventListener('click', function(e) {
-        if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.classList.remove('menu-open');
+        const isClickInsideMenu = navMenu.contains(e.target);
+        const isClickOnHamburger = hamburger.contains(e.target);
+        
+        if (!isClickInsideMenu && !isClickOnHamburger && navMenu.classList.contains('active')) {
+            closeMenu();
         }
     });
+    
+    // Fechar menu com ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            closeMenu();
+        }
+    });
+    
+    // Fechar menu ao redimensionar tela
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            closeMenu();
+        }
+    });
+    
+    // Prevenir scroll em iOS quando menu estiver aberto
+    document.addEventListener('touchmove', function(e) {
+        if (document.body.classList.contains('menu-open')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
     
     // Scroll do header com opacidade gradativa
     window.addEventListener('scroll', function() {
