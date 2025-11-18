@@ -284,13 +284,16 @@ body.menu-open {
 
 /* Hero Section */
 .hero {
-    padding: 120px 0 80px;
+    padding: 140px 0 80px;
     background: linear-gradient(135deg, var(--light-blue) 0%, var(--white) 50%, var(--light-orange) 100%);
     display: flex;
     align-items: center;
     min-height: 100vh;
     position: relative;
     overflow: hidden;
+    margin-top: 0;
+    /* Garantir que não seja sobreposta pelo header */
+    padding-top: 140px;
 }
 
 .hero::before {
@@ -1993,7 +1996,8 @@ body.menu-open {
     /* Hero section */
     .hero {
         min-height: auto;
-        padding: 100px 0 50px;
+        padding: 120px 0 50px;
+        padding-top: 120px;
         margin-top: 0;
     }
     
@@ -2185,7 +2189,8 @@ body.menu-open {
     
     /* Hero section mobile pequeno */
     .hero {
-        padding: 90px 0 40px;
+        padding: 120px 0 40px;
+        padding-top: 120px;
     }
     
     .hero-text h1 {
